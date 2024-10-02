@@ -12,11 +12,14 @@ async def get_single_user(id: int):
 
 
 async def auth_user(email: str, password: str):
-    crypted = hashlib.sha256(password)
-    exist_user = await dbHandler.query(UserSchema).filter(
-        and_(UserSchema.email == email, UserSchema.password == crypted)
-    )
-    return exist_user is not None
+    try:
+        crypted = hashlib.sha256(password)
+        exist_user = await dbHandler.query(UserSchema).filter(
+            and_(UserSchema.email == email, UserSchema.password == crypted)
+        )
+        return exist_user is not None
+    except Exception as e:
+        return False
 
 
 async def get_multi_users(page: int, perpage: int):
@@ -25,21 +28,27 @@ async def get_multi_users(page: int, perpage: int):
 
 
 async def insert_user(user_info: UserModel):
-    new_user = UserSchema(
-        email=user_info.email,
-        username=user_info.username,
-        password=hashlib.sha256(user_info.password),
-    )
-    dbHandler.add(new_user)
-    dbHandler.commit()
+    try :
+        new_user = UserSchema(
+            email=user_info.email,
+            username=user_info.username,
+            password=hashlib.sha256(user_info.password),
+        )
+        dbHandler.add(new_user)
+        dbHandler.commit()
+        return True
+    except Exception as e:
+        return False
 
 
 async def delete_user(id: int):
-    user = await dbHandler.query(UserSchema).filter(UserSchema.id == id).first()
-
-    if user:
-        dbHandler.delete(user)
-        dbHandler.commit()
-        return True
-    else:
+    try:
+        user = await dbHandler.query(UserSchema).filter(UserSchema.id == id).first()
+        if user:
+            dbHandler.delete(user)
+            dbHandler.commit()
+            return True
+        else:
+            return False
+    except Exception as e:
         return False
