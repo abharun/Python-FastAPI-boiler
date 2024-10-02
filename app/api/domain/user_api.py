@@ -26,8 +26,8 @@ async def sign_up_user(new_user: UserModel):
 
 
 @user_api.post("/signin")
-async def sign_in_user(new_user: UserModel):
-    result = await UserService.auth_user(new_user)
+async def sign_in_user(user: UserModel):
+    result = await UserService.auth_user(email=user.email, password=user.password)
     if result:
         return {"Status": "Success"}
     else:
