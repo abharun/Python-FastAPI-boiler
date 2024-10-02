@@ -9,4 +9,4 @@ def health_check():
     return {"Message": "Server is Running"}
 
 
-api_router.include_router(user_router)
+api_router.include_router(user_router, prefix="/user")
