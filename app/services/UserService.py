@@ -15,10 +15,8 @@ async def auth_user(email: str, password: str):
     try:
         password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
         exist_user = dbHandler.query(UserSchema).filter(UserSchema.email == email).first()
-        print (password, password_hash, exist_user.password)
         return exist_user.password == password_hash
     except Exception as e:
-        print (e)
         return False
 
 
